@@ -1,0 +1,62 @@
+/**
+  Pins:
+  Hardware SPI:
+  MISO -> 12
+  MOSI -> 11
+  SCK -> 13
+  CE -> 9
+  CSN -> 10 
+  
+  
+  A0 -> Brake White
+  A1 -> RightBlinker Green 
+  A2 -> LeftBlinker Yellow
+  
+ */
+ 
+ /*-----( Import needed libraries )-----*/
+#include <nRF24L01.h>
+#include <RF24.h>
+#include <RF24_config.h>
+#include <SPI.h>
+
+/*-----( Declare Constants and Pin Numbers )-----*/
+#define CE_PIN   9
+#define CSN_PIN 10
+#define Brake A0
+#define LeftBlinker A1
+#define RightBlinker A2
+
+const uint64_t pipe = 0xE8E8F0F0E1LL; // Define the transmit pipe
+
+/*-----( Declare objects )-----*/
+RF24 radio(CE_PIN, CSN_PIN); // Create a Radio
+
+/*-----( Declare Variables )-----*/
+int input[3];
+
+ 
+
+void setup()   /****** SETUP: RUNS ONCE ******/
+{
+  Serial.begin(9600);
+  radio.begin();
+  radio.openWritingPipe(pipe);
+}
+//--(end setup )---
+
+void loop()   /****** LOOP: RUNS CONSTANTLY ******/
+{
+  input[0] = analogRead(Brake);
+  input[1] = analogRead(LeftBlinker);
+  input[2] = analogRead(RightBlinker);
+  
+  //Serial.println(input[0]);
+  radio.write(input, sizeof(input));
+
+}//--(end main loop )---
+
+/*-----( Declare User-written Functions )-----*/
+
+//NONE
+//*********( THE END )***********
